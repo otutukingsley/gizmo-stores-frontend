@@ -1,4 +1,4 @@
-import axios from "axios";
+import http from '../config/http'
 import {
   ORDER_CREATE_ERROR,
   ORDER_CREATE_REQUEST,
@@ -21,24 +21,13 @@ import {
   DELIVER_ORDER_RESET,
 } from "../constants/orderConstants";
 
-export const createOrder = (order) => async (dispatch, getState) => {
+export const createOrder = (order) => async (dispatch) => {
   try {
     dispatch({
       type: ORDER_CREATE_REQUEST,
     });
 
-    const {
-      userLogin: { userInfo },
-    } = getState();
-
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    };
-
-    const response = await axios.post(`/api/orders`, order, config);
+    const response = await http.post(`/api/orders`, order );
 
     dispatch({
       type: ORDER_CREATE_SUCCESS,
@@ -55,24 +44,13 @@ export const createOrder = (order) => async (dispatch, getState) => {
   }
 };
 
-export const getOrder = (id) => async (dispatch, getState) => {
+export const getOrder = (id) => async (dispatch) => {
   try {
     dispatch({
       type: ORDER_RETRIEVE_REQUEST,
     });
 
-    const {
-      userLogin: { userInfo },
-    } = getState();
-
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    };
-
-    const response = await axios.get(`/api/orders/${id}`, config);
+    const response = await http.get(`/api/orders/${id}`);
 
     dispatch({
       type: ORDER_RETRIEVE_SUCCESS,
@@ -89,27 +67,15 @@ export const getOrder = (id) => async (dispatch, getState) => {
   }
 };
 
-export const payOrder = (id, paymentResult) => async (dispatch, getState) => {
+export const payOrder = (id, paymentResult) => async (dispatch) => {
   try {
     dispatch({
       type: ORDER_PAY_REQUEST,
     });
 
-    const {
-      userLogin: { userInfo },
-    } = getState();
-
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    };
-
-    const response = await axios.put(
+    const response = await http.put(
       `/api/orders/${id}/pay`,
-      paymentResult,
-      config
+      paymentResult
     );
 
     dispatch({
@@ -129,26 +95,15 @@ export const payOrder = (id, paymentResult) => async (dispatch, getState) => {
 
 export const deliverOrder =
   (id, formData = {}) =>
-  async (dispatch, getState) => {
+  async (dispatch) => {
     try {
       dispatch({
         type: DELIVER_ORDER_REQUEST,
       });
 
-      const {
-        userLogin: { userInfo },
-      } = getState();
-
-      const config = {
-        headers: {
-          Authorization: `Bearer ${userInfo.token}`,
-        },
-      };
-
-      const response = await axios.put(
+      const response = await http.put(
         `/api/orders/${id}/deliver`,
-        formData,
-        config
+        formData
       );
 
       console.log(response);
@@ -168,24 +123,13 @@ export const deliverOrder =
     }
   };
 
-export const getMyOrders = () => async (dispatch, getState) => {
+export const getMyOrders = () => async (dispatch) => {
   try {
     dispatch({
       type: GET_MY_ORDERS_REQUEST,
     });
 
-    const {
-      userLogin: { userInfo },
-    } = getState();
-
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    };
-
-    const response = await axios.get(`/api/orders/myorders`, config);
+    const response = await http.get(`/api/orders/myorders`);
 
     dispatch({
       type: GET_MY_ORDERS_SUCCESS,
@@ -202,24 +146,13 @@ export const getMyOrders = () => async (dispatch, getState) => {
   }
 };
 
-export const getAllOrders = () => async (dispatch, getState) => {
+export const getAllOrders = () => async (dispatch) => {
   try {
     dispatch({
       type: GET_ALL_ORDERS_REQUEST,
     });
 
-    const {
-      userLogin: { userInfo },
-    } = getState();
-
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    };
-
-    const { data } = await axios.get(`/api/orders`, config);
+    const { data } = await http.get(`/api/orders`);
 
     dispatch({
       type: GET_ALL_ORDERS_SUCCESS,

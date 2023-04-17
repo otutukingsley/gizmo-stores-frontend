@@ -1,4 +1,4 @@
-import axios from "axios";
+import http from '../config/http'
 import * as actionTypes from "../constants/productsConstants";
 
 export const listProducts =
@@ -9,7 +9,7 @@ export const listProducts =
         type: actionTypes.PRODUCT_LIST_REQUEST,
       });
 
-      const { data } = await axios.get(
+      const { data } = await http.get(
         `/api/products?keyword=${keyword}&pageNumber=${pageNumber}`
       );
 
@@ -34,7 +34,7 @@ export const eachProduct = (id) => async (dispatch) => {
       type: actionTypes.PRODUCT_DETAILS_REQUEST,
     });
 
-    const response = await axios.get(`/api/products/${id}`);
+    const response = await http.get(`/api/products/${id}`);
 
     dispatch({
       type: actionTypes.PRODUCT_DETAILS_SUCCESS,
@@ -51,23 +51,13 @@ export const eachProduct = (id) => async (dispatch) => {
   }
 };
 
-export const deleteProduct = (id) => async (dispatch, getState) => {
+export const deleteProduct = (id) => async (dispatch) => {
   try {
     dispatch({
       type: actionTypes.PRODUCT_DELETE_REQUEST,
     });
 
-    const {
-      userLogin: { userInfo },
-    } = getState();
-
-    const config = {
-      headers: {
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    };
-
-    const response = await axios.delete(`/api/products/${id}`, config);
+    const response = await http.delete(`/api/products/${id}`);
 
     dispatch({
       type: actionTypes.PRODUCT_DELETE_SUCCESS,
@@ -86,23 +76,13 @@ export const deleteProduct = (id) => async (dispatch, getState) => {
 
 export const createSingleProduct =
   (formData = {}) =>
-  async (dispatch, getState) => {
+  async (dispatch) => {
     try {
       dispatch({
         type: actionTypes.PRODUCT_CREATE_REQUEST,
       });
 
-      const {
-        userLogin: { userInfo },
-      } = getState();
-
-      const config = {
-        headers: {
-          Authorization: `Bearer ${userInfo.token}`,
-        },
-      };
-
-      const { data } = await axios.post(`/api/products`, formData, config);
+      const { data } = await http.post(`/api/products`, formData);
 
       dispatch({
         type: actionTypes.PRODUCT_CREATE_SUCCESS,
@@ -136,24 +116,13 @@ export const resetReview = () => (dispatch) => {
 
 export const updateSingleProduct =
   (id, formData = {}) =>
-  async (dispatch, getState) => {
+  async (dispatch) => {
     try {
       dispatch({
         type: actionTypes.PRODUCT_UPDATE_REQUEST,
       });
 
-      const {
-        userLogin: { userInfo },
-      } = getState();
-
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userInfo.token}`,
-        },
-      };
-
-      const { data } = await axios.put(`/api/products/${id}`, formData, config);
+      const { data } = await http.put(`/api/products/${id}`, formData);
 
       dispatch({
         type: actionTypes.PRODUCT_UPDATE_SUCCESS,
@@ -175,27 +144,15 @@ export const updateSingleProduct =
 
 export const reviewSingleProduct =
   (id, formData = {}) =>
-  async (dispatch, getState) => {
+  async (dispatch) => {
     try {
       dispatch({
         type: actionTypes.PRODUCT_REVIEW_REQUEST,
       });
 
-      const {
-        userLogin: { userInfo },
-      } = getState();
-
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${userInfo.token}`,
-        },
-      };
-
-      const { data } = await axios.post(
+      const { data } = await http.post(
         `/api/products/${id}/review`,
-        formData,
-        config
+        formData
       );
 
       dispatch({
@@ -221,7 +178,7 @@ export const topProducts = () => async (dispatch) => {
 
     const {
       data: { products },
-    } = await axios.get(`/api/products/top`);
+    } = await http.get(`/api/products/top`);
 
     dispatch({
       type: actionTypes.TOP_PRODUCTS_SUCCESS,

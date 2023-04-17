@@ -1,25 +1,19 @@
 import * as actionTypes from "../constants/userConstants"
 import { GET_MY_ORDERS_RESET } from "../constants/orderConstants"
-import axios from "axios"
+import http from '../config/http'
 
 export const login = (email, password) => async (dispatch) => {
   try {
     dispatch({
       type: actionTypes.USER_LOGIN_REQUEST,
     })
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
 
-    const response = await axios.post(
+    const response = await http.post(
       "/api/users/login",
       {
         email,
         password,
       },
-      config
     )
 
     dispatch({
@@ -45,20 +39,13 @@ export const register = (name, email, password) => async (dispatch) => {
       type: actionTypes.USER_REGISTER_REQUEST,
     })
 
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-
-    const response = await axios.post(
+    const response = await http.post(
       "/api/users",
       {
         name,
         email,
         password,
-      },
-      config
+      }
     )
 
     dispatch({
@@ -82,24 +69,13 @@ export const register = (name, email, password) => async (dispatch) => {
   }
 }
 
-export const getUserProfile = (id) => async (dispatch, getState) => {
+export const getUserProfile = (id) => async (dispatch) => {
   try {
     dispatch({
       type: actionTypes.USER_DETAILS_REQUEST,
     })
 
-    const {
-      userLogin: { userInfo },
-    } = getState()
-
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    }
-
-    const response = await axios.get(`/api/users/${id}`, config)
+    const response = await http.get(`/api/users/${id}`)
 
     dispatch({
       type: actionTypes.USER_DETAILS_SUCCESS,
@@ -116,24 +92,13 @@ export const getUserProfile = (id) => async (dispatch, getState) => {
   }
 }
 
-export const updateUserProfile = (user) => async (dispatch, getState) => {
+export const updateUserProfile = (user) => async (dispatch) => {
   try {
     dispatch({
       type: actionTypes.USER_UPDATE_REQUEST,
     })
 
-    const {
-      userLogin: { userInfo },
-    } = getState()
-
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    }
-
-    const response = await axios.put(`/api/users/profile`, user, config)
+    const response = await http.put(`/api/users/profile`, user)
 
     dispatch({
       type: actionTypes.USER_UPDATE_SUCCESS,
@@ -158,23 +123,13 @@ export const updateUserProfile = (user) => async (dispatch, getState) => {
   }
 }
 
-export const adminUsersList = () => async (dispatch, getState) => {
+export const adminUsersList = () => async (dispatch) => {
   try {
     dispatch({
       type: actionTypes.USERS_LIST_REQUEST,
     })
 
-    const {
-      userLogin: { userInfo },
-    } = getState()
-
-    const config = {
-      headers: {
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    }
-
-    const response = await axios.get(`/api/users`, config)
+    const response = await http.get(`/api/users`)
 
     dispatch({
       type: actionTypes.USERS_LIST_SUCCESS,
@@ -191,23 +146,13 @@ export const adminUsersList = () => async (dispatch, getState) => {
   }
 }
 
-export const deleteUser = (id) => async (dispatch, getState) => {
+export const deleteUser = (id) => async (dispatch) => {
   try {
     dispatch({
       type: actionTypes.USER_DELETE_REQUEST,
     })
 
-    const {
-      userLogin: { userInfo },
-    } = getState()
-
-    const config = {
-      headers: {
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    }
-
-    const response = await axios.delete(`/api/users/${id}`, config)
+    const response = await http.delete(`/api/users/${id}`)
 
     dispatch({
       type: actionTypes.USER_DELETE_SUCCESS,
@@ -224,24 +169,13 @@ export const deleteUser = (id) => async (dispatch, getState) => {
   }
 }
 
-export const editUser = (id, formData) => async (dispatch, getState) => {
+export const editUser = (id, formData) => async (dispatch) => {
   try {
     dispatch({
       type: actionTypes.USER_EDIT_REQUEST,
     })
 
-    const {
-      userLogin: { userInfo },
-    } = getState()
-
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    }
-
-    const response = await axios.put(`/api/users/${id}`, formData, config)
+    const response = await http.put(`/api/users/${id}`, formData)
 
     dispatch({
       type: actionTypes.USER_EDIT_SUCCESS,
