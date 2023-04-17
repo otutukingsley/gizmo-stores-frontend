@@ -17,7 +17,7 @@ http.interceptors.request.use(
     request.headers["Access-Control-Allow-Origin"] = "*";
 
     if (request.method !== "GET") {
-      request.headers["Content-Type"] = "multipart/mixed";
+      request.headers["Content-Type"] = "application/json";
     }
 
     return request;

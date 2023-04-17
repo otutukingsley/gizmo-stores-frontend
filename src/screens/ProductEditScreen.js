@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,6 +10,7 @@ import {
   eachProduct,
   updateSingleProduct,
 } from "../actions/productActions";
+import http from "../config/http";
 
 const ProductEditScreen = () => {
   const { id } = useParams();
@@ -77,29 +77,32 @@ const ProductEditScreen = () => {
     [dispatch, productItem, id]
   );
 
-  const uploadFileHandler = useCallback(async (e) => {
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("image", file);
-    setUploading(true);
-
-    try {
-      const config = {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
+  const uploadFileHandler = useCallback(
+    async (e) => {
+      let src;
+      const reader = new FileReader();
+      reader.readAsDataURL(e.target.files[0]);
+      reader.onloadend = () => {
+        src = reader.result;
+        console.log(src)
       };
-      const { data } = await axios.post("/api/upload", formData, config);
-      setProductItem((current) => ({
-        ...current,
-        image: data,
-      }));
-      setUploading(false);
-    } catch (err) {
-      console.error(err);
-      setUploading(false);
-    }
-  }, []);
+
+      setUploading(true);
+      try {
+        const res = await http.post(`/api/upload/${id}`, { src });
+        console.log(res);
+        // setProductItem((current) => ({
+        //   ...current,
+        //   image: res,
+        // }));
+        setUploading(false);
+      } catch (err) {
+        console.error(err);
+        setUploading(false);
+      }
+    },
+    [id]
+  );
 
   return (
     <>
