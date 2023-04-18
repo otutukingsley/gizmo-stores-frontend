@@ -77,32 +77,56 @@ const ProductEditScreen = () => {
     [dispatch, productItem, id]
   );
 
-  const uploadFileHandler = useCallback(
-    async (e) => {
-      let src;
-      const reader = new FileReader();
-      reader.readAsDataURL(e.target.files[0]);
-      reader.onloadend = () => {
-        src = reader.result;
-        console.log(src)
-      };
+  const submitFile = async (result) => {
+    setUploading(true);
+    try {
+      const {data} = await http.post(
+        `/api/products/${id}/upload`,
+        {
+          image: result,
+        },
+      );
 
-      setUploading(true);
-      try {
-        const res = await http.post(`/api/upload/${id}`, { src });
-        console.log(res);
-        // setProductItem((current) => ({
-        //   ...current,
-        //   image: res,
-        // }));
-        setUploading(false);
-      } catch (err) {
-        console.error(err);
-        setUploading(false);
-      }
-    },
-    [id]
-  );
+      setProductItem((current) => ({
+        ...current,
+        image: data,
+      }));
+
+      setUploading(false);
+
+    } catch (err) {
+      console.error(err);
+      setUploading(false);
+    }
+  };
+
+  const uploadFileHandler = async (e) => {
+    const filePromises = [...e.target.files].map((file) => {
+      //Return a promise per file
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = async () => {
+          try {
+            const response = await submitFile(reader.result);
+            resolve(response);
+          } catch (err) {
+            reject(err);
+          }
+        };
+
+        reader.onerror = (err) => {
+          reject(err);
+        };
+
+        reader.readAsDataURL(file);
+      });
+    });
+
+    const fileInfos = await Promise.all(filePromises);
+
+    return fileInfos;
+  };
 
   return (
     <>

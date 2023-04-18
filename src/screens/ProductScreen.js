@@ -67,8 +67,6 @@ const ProductScreen = () => {
     }));
   }, []);
 
-  console.log(product)
-
   return (
     !!product && (
       <Fragment>
